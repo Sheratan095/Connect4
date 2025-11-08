@@ -1,0 +1,18 @@
+# Suppress MemorySanitizer warnings from system libraries
+# These libraries are not compiled with -fsanitize=memory
+
+# Suppress all .so shared libraries (system libraries)
+src:*/lib/*.so*
+src:*/usr/lib/*.so*
+src:*/lib64/*.so*
+src:*/usr/lib64/*.so*
+src:*/lib/x86_64-linux-gnu/*.so*
+src:*/usr/lib/x86_64-linux-gnu/*.so*
+
+# Alternative: suppress by library name patterns
+fun:*libX11*
+fun:*libcairo*
+fun:*libfontconfig*
+fun:*libfreetype*
+fun:*libpng*
+fun:*libxcb*

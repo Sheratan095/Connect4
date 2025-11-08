@@ -48,7 +48,7 @@
 #endif
 
 #ifndef DEPTH
-#define DEPTH 6
+#define DEPTH 1
 #endif
 
 typedef enum e_player

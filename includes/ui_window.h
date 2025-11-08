@@ -26,7 +26,7 @@ typedef struct s_window_context
 } t_window_context;
 
 // Window management functions
-t_window_context *init_window(void);
+t_window_context *init_window(t_game *game);
 void cleanup_window(t_window_context *ctx);
 
 #endif

@@ -1,10 +1,11 @@
 #include "connect4.h"
+#include <fontconfig/fontconfig.h>
 
 static bool valid_input(int argc, char **argv, bool *gui);
 
 int main(int argc, char **argv)
 {
-	bool gui;
+	bool gui = false;
 
 	if (!valid_input(argc, argv, &gui))
 		return (1);
@@ -25,6 +26,10 @@ int main(int argc, char **argv)
 		start_game_cli(new_game);
 
 	free_game(new_game);
+
+	// Clean up fontconfig cache (prevents memory leak reports)
+	if (gui)
+		FcFini();
 
 	return (0);
 }

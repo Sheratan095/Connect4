@@ -7,7 +7,7 @@ PAWN_2 = 🟡
 
 COREKIT_PATH = ./lib/corekit
 
-VALGRIND =  valgrind --leak-check=full --track-origins=yes --track-fds=yes --show-leak-kinds=all
+VALGRIND =  valgrind --leak-check=full --track-origins=yes --track-fds=yes --show-leak-kinds=all --suppressions=valgrind.supp
 
 INCLUDES = -I$(COREKIT_PATH)/includes -I./includes
 
@@ -22,17 +22,17 @@ SRC = src/main.c \
 	src/ai.c \
 	src/utils.c
 
-FLAGS	= -o3
+FLAGS = -g
 FLAGS	+= -Wall -Werror -Wextra
-FLAGS	+= `pkg-config --libs cairo x11` -lm `pkg-config --cflags cairo x11`
+FLAGS	+= `pkg-config --libs cairo x11 fontconfig` -lm `pkg-config --cflags cairo x11 fontconfig`
 FLAGS	+= -DPAWN_1=\"$(PAWN_1)\" -DPAWN_2=\"$(PAWN_2)\"
-FLAGS	+= -DMAX_ROWS=19 -DMAX_COLS=20
+FLAGS	+= -DMAX_ROWS=420 -DMAX_COLS=67
 
 LIBCOREKIT = $(COREKIT_PATH)/libcorekit.a
 
 $(NAME): $(SRC) $(LIBCOREKIT)
 	@echo "$(GREEN)[COREKIT]:\t COREKIT CREATED$(RESET)"
-	@cc $(SRC) $(INCLUDES) $(FLAGS) -lm -L$(COREKIT_PATH) -lcorekit -o $(NAME)
+	@clang $(SRC) $(INCLUDES) $(FLAGS) -lm -L$(COREKIT_PATH) -lcorekit -o $(NAME)
 	@echo "$(GREEN)[$(NAME)]:\t PROJECT COMPILED$(RESET)"
 
 $(LIBCOREKIT):

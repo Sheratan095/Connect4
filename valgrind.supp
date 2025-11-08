@@ -1,0 +1,37 @@
+# Suppress Cairo internal glyph/font cache leaks
+# These are library-internal caches that are not real leaks
+{
+   cairo_glyph_cache
+   Memcheck:Leak
+   ...
+   fun:cairo_show_text
+}
+
+{
+   cairo_font_cache
+   Memcheck:Leak
+   ...
+   obj:*/libcairo.so*
+}
+
+# Suppress X11 locale caching
+{
+   x11_locale_cache
+   Memcheck:Leak
+   ...
+   fun:_XlcCreateLC
+}
+
+# Suppress pixman library initialization (still reachable, not leaked)
+# These are global library state allocated during _dl_init
+{
+   pixman_global_init
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   obj:*/libpixman-1.so*
+   ...
+   fun:call_init.part.0
+   fun:call_init
+   fun:_dl_init
+}
