@@ -31,7 +31,7 @@ static int	get_move(t_game *game)
 			(game->current_player == PLAYER) ? PAWN_1 : PAWN_2);
 
 		char	*input = get_next_line(0, false);
-		if (!input)
+		if (!input || input[0] == '\n')
 		{
 			ft_printf("Error reading input. Please try again.\n");
 			continue;
