@@ -1,10 +1,10 @@
 #include "connect4.h"
 
-static int	get_move(t_game *game);
+static int get_move(t_game *game);
 
-int	player_make_move(t_game *game)
+int player_make_move(t_game *game)
 {
-	int	column_choice = get_move(game);
+	int column_choice = get_move(game);
 	if (column_choice == -1)
 		return (-1);
 
@@ -15,22 +15,22 @@ int	player_make_move(t_game *game)
 		if (column_choice == -1)
 			return (-1);
 	}
-	
+
 	return (0);
 }
 
-static int	get_move(t_game *game)
+static int get_move(t_game *game)
 {
-	int	column = -1;
-	int	game_over = FALSE;
-	int	valid_move = FALSE;
+	int column = -1;
+	int game_over = false;
+	int valid_move = false;
 
 	while (!valid_move && !game_over)
 	{
-		ft_printf("Player %s, enter your move (0-6): ", 
-			(game->current_player == PLAYER) ? PAWN_1 : PAWN_2);
+		ft_printf("Player %s, enter your move (0-6): ",
+				  (game->current_player == PLAYER) ? PAWN_1 : PAWN_2);
 
-		char	*input = get_next_line(0, FALSE);
+		char *input = get_next_line(0, false);
 		if (!input || input[0] == '\n')
 		{
 			ft_printf("Error reading input. Please try again.\n");
@@ -38,19 +38,19 @@ static int	get_move(t_game *game)
 		}
 
 		if (ft_strcmp(input, "exit\n") == 0 || ft_strcmp(input, "q\n") == 0)
-			game_over = TRUE;
+			game_over = true;
 		else
 		{
 			column = ft_atoi(input);
 			if (column < 0 || column >= game->cols)
 				ft_printf("Invalid column. Please enter a number between 0 and %d.\n", game->cols - 1);
 			else
-				valid_move = TRUE;
+				valid_move = true;
 		}
 
 		free(input);
 	}
 
-	get_next_line(0, TRUE); // Clean up static memory in get_next_line
+	get_next_line(0, true); // Clean up static memory in get_next_line
 	return (column);
 }

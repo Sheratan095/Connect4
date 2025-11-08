@@ -1,29 +1,30 @@
 #include "connect4.h"
 
-int	player_make_move(t_game *game);
+int player_make_move(t_game *game);
 
-void	start_game_cli(t_game *game)
+void start_game_cli(t_game *game)
 {
 	cli_render_board(game);
 
-	while (TRUE)
+	while (true)
 	{
 		if (game->current_player == AI)
 			ai_make_move(game);
 
 		if (game->current_player == PLAYER)
 		{
+			ft_printf("Player is making a move.\n");
 			if (player_make_move(game) == -1)
 			{
 				ft_printf("Game exited by player.\n");
-				break ;
+				break;
 			}
 		}
 
 		cli_render_board(game);
 
 		if (check_endgame(game))
-			break ;
+			break;
 
 		switch_player(game);
 	}
