@@ -32,7 +32,7 @@ LIBCOREKIT = $(COREKIT_PATH)/libcorekit.a
 
 $(NAME): $(SRC) $(LIBCOREKIT)
 	@echo "$(GREEN)[COREKIT]:\t COREKIT CREATED$(RESET)"
-	@clang $(SRC) $(INCLUDES) $(FLAGS) -lm -L$(COREKIT_PATH) -lcorekit -o $(NAME)
+	@cc $(SRC) $(INCLUDES) $(FLAGS) -lm -L$(COREKIT_PATH) -lcorekit -o $(NAME)
 	@echo "$(GREEN)[$(NAME)]:\t PROJECT COMPILED$(RESET)"
 
 $(LIBCOREKIT):
