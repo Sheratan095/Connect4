@@ -11,11 +11,25 @@ t_game	*init_new_game(int rows, int cols)
 
 	game->current_player = PLAYER;
 
-	game->board = malloc(sizeof(char *) * 6);
-	for (int i = 0; i < 6; i++)
+	game->board = ft_calloc(rows + 1, sizeof(char *));
+	if (!game->board)
 	{
-		game->board[i] = malloc(sizeof(char) * 7);
-		ft_bzero(game->board[i], sizeof(char) * 7);
+		free(game);
+		return (NULL);
+	}
+	for (int i = 0; i < rows; i++)
+	{
+		game->board[i] = ft_calloc(cols + 1, sizeof(char));
+		if (!game->board[i])
+		{
+			// free previously allocated rows and board
+			for (int j = 0; j < i; j++)
+				free(game->board[j]);
+			free(game->board);
+			free(game);
+			return (NULL);
+		}
+		ft_bzero(game->board[i], sizeof(char) * cols);
 	}
 
 	return (game);

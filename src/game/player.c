@@ -37,7 +37,7 @@ static int	get_move(t_game *game)
 			continue;
 		}
 
-		if (ft_strcmp(input, "exit\n") == 0)
+		if (ft_strcmp(input, "exit\n") == 0 || ft_strcmp(input, "q\n") == 0)
 			game_over = true;
 		else
 		{

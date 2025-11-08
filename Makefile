@@ -9,7 +9,7 @@ COREKIT_PATH = ./lib/corekit
 # MLX_PATH = ./lib/mlx
 MLX_PATH =
 
-VALGRIND =  valgrind --leak-check=full --track-origins=yes --track-fds=yes --show-leak-kinds=all --suppressions=mlx.supp
+VALGRIND =  valgrind --leak-check=full --track-origins=yes --track-fds=yes --show-leak-kinds=all
 
 INCLUDES = -I$(COREKIT_PATH)/includes -I./includes
 
