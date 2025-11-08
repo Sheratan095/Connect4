@@ -45,6 +45,7 @@ typedef struct	s_game
 	t_player	current_player;
 	int			rows;
 	int			cols;
+	t_bool		gui_mode;
 }	t_game;
 
 void			cli_render_board(t_game *game);
@@ -59,7 +60,7 @@ int				player_make_move(t_game *game);
 
 //--------------------HELPER FUNCTIONS--------------------//
 
-t_game			*init_new_game(int rows, int cols);
+t_game			*init_new_game(int rows, int cols, t_bool gui_mode);
 
 void			free_game(t_game *game);
 

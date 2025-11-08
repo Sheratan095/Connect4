@@ -1,16 +1,18 @@
 #include "connect4.h"
 
-static t_bool	valid_input(int argc, char **argv);
+static t_bool	valid_input(int argc, char **argv, t_bool *gui_mode);
 
 int	main(int argc, char **argv)
 {
-	if (!valid_input(argc, argv))
+	t_bool	gui_mode = false;
+
+	if (!valid_input(argc, argv, &gui_mode))
 		return (1);
 
 	int	rows = ft_atoi(argv[1]);
 	int	cols = ft_atoi(argv[2]);
 
-	t_game	*new_game = init_new_game(rows, cols);
+	t_game	*new_game = init_new_game(rows, cols, gui_mode);
 	if (!new_game)
 	{
 		ft_printf("Error: Could not start a new game.\n");
@@ -24,7 +26,8 @@ int	main(int argc, char **argv)
 	return (0);
 }
 
-static t_bool	valid_input(int argc, char **argv)
+// 3rd paramter says if the game has to run with SDL or in terminal
+static t_bool	valid_input(int argc, char **argv, t_bool *gui_mode)
 {
 	if (MAX_COLS < MIN_COLS || MAX_ROWS < MIN_ROWS)
 	{
@@ -34,8 +37,20 @@ static t_bool	valid_input(int argc, char **argv)
 
 	if (argc != 3)
 	{
-		ft_printf("Usage: %s <rows> <columns>\n", argv[0]);
-		return (false);
+		if (argc == 4)
+		{
+			if (ft_strcmp(argv[3], "--gui") != 0)
+			{
+				ft_printf("Error: Invalid argument '%s'. Expected '--gui'.\n", argv[3]);
+				return (false);
+			}
+			*gui_mode = true;
+		}
+		else
+		{
+			ft_printf("Usage: %s <rows> <columns>\n", argv[0]);
+			return (false);
+		}
 	}
 
 	if (!ft_is_string_numeric(argv[1]) || !ft_is_string_numeric(argv[2]))

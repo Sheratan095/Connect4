@@ -1,6 +1,6 @@
 #include "connect4.h"
 
-t_game	*init_new_game(int rows, int cols)
+t_game	*init_new_game(int rows, int cols, t_bool gui_mode)
 {
 	t_game	*game = malloc(sizeof(t_game));
 	if (!game)
@@ -8,6 +8,7 @@ t_game	*init_new_game(int rows, int cols)
 
 	game->rows = rows;
 	game->cols = cols;
+	game->gui_mode = gui_mode;
 
 	game->current_player = PLAYER;
 
