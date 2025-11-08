@@ -8,8 +8,11 @@ t_game	*init_new_game(int rows, int cols)
 
 	game->rows = rows;
 	game->cols = cols;
-
 	game->current_player = PLAYER;
+	game->game_over = false;
+	game->winner = NULL_PLAYER;
+	game->last_row = -1;
+	game->last_col = -1;
 
 	game->board = ft_calloc(rows + 1, sizeof(char *));
 	if (!game->board)
@@ -29,8 +32,12 @@ t_game	*init_new_game(int rows, int cols)
 			free(game);
 			return (NULL);
 		}
-		ft_bzero(game->board[i], sizeof(char) * cols);
+		// Initialize row with empty cells
+		for (int j = 0; j < cols; j++)
+			game->board[i][j] = '.';
+		game->board[i][cols] = '\0';  // Null terminate the string
 	}
+	game->board[rows] = NULL;  // Null terminate the array
 
 	return (game);
 }
@@ -48,9 +55,12 @@ int	insert_pawn(t_game *game, int column)
 {
 	for (int row = game->rows - 1; row >= 0; row--)
 	{
-		if (game->board[row][column] == NULL_PLAYER)
+		if (game->board[row][column] == '.')  // Check for empty cell
 		{
-			game->board[row][column] = game->current_player;
+			game->board[row][column] = game->current_player + '0';  // Convert to character
+			game->last_row = row;  // Update last move position
+			game->last_col = column;
+			switch_player(game);  // Switch to next player
 			return (row);
 		}
 	}
