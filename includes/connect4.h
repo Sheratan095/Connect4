@@ -11,8 +11,16 @@
 	#define PAWN_2 "🟡"
 #endif
 
-#define MIN_LINES 6
+#define MIN_ROWS 6
 #define MIN_COLS 7
+
+#ifndef MAX_ROWS
+	#define MAX_ROWS 20
+#endif
+
+#ifndef MAX_COLS
+	#define MAX_COLS 20
+#endif
 
 #define EMPTY_BOARD_CHAR '.'
 
@@ -41,7 +49,7 @@ typedef struct	s_game
 
 void			cli_render_board(t_game *game);
 
-void			start_new_game(int rows, int cols);
+void			start_game(t_game *game);
 
 void			ai_make_move(t_game *game);
 

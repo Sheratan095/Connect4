@@ -3,41 +3,31 @@
 static void	switch_player(t_game *game);
 static int	check_endgame(t_game *game);
 
-void	start_new_game(int rows, int cols)
+void	start_game(t_game *game)
 {
-	t_game	*new_game = init_new_game(rows, cols);
-
-	if (!new_game)
-	{
-		ft_printf("Error: Could not start a new game.\n");
-		return ;
-	}
-
-	cli_render_board(new_game);
+	cli_render_board(game);
 
 	while (true)
 	{
-		if (new_game->current_player == AI)
-			ai_make_move(new_game);
+		if (game->current_player == AI)
+			ai_make_move(game);
 
-		if (new_game->current_player == PLAYER)
+		if (game->current_player == PLAYER)
 		{
-			if (player_make_move(new_game) == -1)
+			if (player_make_move(game) == -1)
 			{
 				ft_printf("Game exited by player.\n");
 				break ;
 			}
 		}
 
-		cli_render_board(new_game);
+		cli_render_board(game);
 
-		if (check_endgame(new_game))
+		if (check_endgame(game))
 			break ;
 
-		switch_player(new_game);
+		switch_player(game);
 	}
-
-	free_game(new_game);
 }
 
 // Change the current player

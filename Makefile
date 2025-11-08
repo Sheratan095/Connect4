@@ -23,7 +23,8 @@ SRC = src/main.c \
 
 FLAGS	= -g
 FLAGS	+= -Wall -Werror -Wextra
-FLAGS	+= -D PAWN_1=\"$(PAWN_1)\" -D PAWN_2=\"$(PAWN_2)\"
+FLAGS	+= -DPAWN_1=\"$(PAWN_1)\" -DPAWN_2=\"$(PAWN_2)\"
+FLAGS	+= -DMAX_ROWS=19 -DMAX_COLS=20
 
 LIBCOREKIT = $(COREKIT_PATH)/libcorekit.a
 
@@ -78,7 +79,7 @@ remove_libs:
 	@echo "$(RED)[COREKIT]:\t COREKIT REMOVED$(RESET)";
 	@rm -fr lib/
 
-args = 
+args = 10 10
 
 test: all
 	 ./$(NAME) $(args)
