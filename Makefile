@@ -17,6 +17,8 @@ SRC = src/main.c \
 	src/cli_game/cli_player.c \
 	src/ui_game/ui_game.c \
 	src/ui_game/clay_render.c \
+	src/ui_game/ui_window.c \
+	src/ui_game/ui_loop.c \
 	src/ai.c \
 	src/utils.c
 

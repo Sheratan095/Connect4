@@ -1,8 +1,6 @@
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <cairo/cairo.h>
-#include <cairo/cairo-xlib.h>
 #include "connect4.h"
+#include "ui_window.h"
+#include "ui_loop.h"
 
 Clay_Color	getPlayerColor(char player)
 {
@@ -17,7 +15,7 @@ Clay_Color	getPlayerColor(char player)
 	}
 }
 
-static int	get_column_at_pos(int x, int y)
+int get_column_at_pos(int x, int y)
 {
 	// Calculate board position
 	int	boardWidth = BOARD_COLS * CELL_SIZE;
@@ -46,7 +44,7 @@ static int	get_column_at_pos(int x, int y)
 	return (col);
 }
 
-static void createUI(t_game *game)
+void createUI(t_game *game)
 {
 	const char *status;
 	const char *instr;
@@ -55,6 +53,8 @@ static void createUI(t_game *game)
 	Clay_String instrString;
 
 	Clay_BeginLayout();
+
+	ft_print_char_matrix((const char **)game->board);
 	
 	// Root container
 	CLAY_AUTO_ID({.layout = {
@@ -146,172 +146,10 @@ void HandleClayErrors(Clay_ErrorData errorData)
 
 void start_game_ui(t_game *game)
 {
-	Display *display;
-	int screen;
-	Window root, window;
-	cairo_surface_t *surface;
-	cairo_t *cr;
-	Atom wmDeleteWindow;
-	void *memory;
-	Clay_Arena arena;
-	int screen_width, screen_height, x, y;
-	bool running, needsRedraw;
-	struct timespec frameDelay;
-	char **fonts;
-
-	// Open display
-	display = XOpenDisplay(NULL);
-	if (!display)
-	{
-		ft_printf("Cannot open display\n");
-		return;
-	}
-
-	screen = DefaultScreen(display);
-	root = RootWindow(display, screen);
-	
-	// Center window on screen
-	screen_width = DisplayWidth(display, screen);
-	screen_height = DisplayHeight(display, screen);
-	x = (screen_width - WINDOW_WIDTH) / 2;
-	y = (screen_height - WINDOW_HEIGHT) / 2;
-	
-	// Create window
-	window = XCreateSimpleWindow(display, root, x, y, WINDOW_WIDTH, WINDOW_HEIGHT,
-		0, BlackPixel(display, screen), BlackPixel(display, screen));
-	
-	XStoreName(display, window, "Connect 4");
-	XSelectInput(display, window, ExposureMask | ButtonPressMask | StructureNotifyMask);
-	
-	// Set up window close handling
-	wmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", False);
-	XSetWMProtocols(display, window, &wmDeleteWindow, 1);
-	
-	XMapWindow(display, window);
-	
-	// Set up Cairo
-	surface = cairo_xlib_surface_create(display, window,
-		DefaultVisual(display, screen), WINDOW_WIDTH, WINDOW_HEIGHT);
-	cr = cairo_create(surface);
-	
-	// Set up Clay
-	Clay_Cairo_Initialize(cr);
-	memory = malloc(Clay_MinMemorySize());
-	if (!memory)
-	{
-		ft_printf("Failed to allocate Clay memory\n");
-		cairo_destroy(cr);
-		cairo_surface_destroy(surface);
-		XCloseDisplay(display);
-		return;
-	}
-	
-	arena = Clay_CreateArenaWithCapacityAndMemory(Clay_MinMemorySize(), memory);
-	Clay_Initialize(arena, (Clay_Dimensions){WINDOW_WIDTH, WINDOW_HEIGHT},
-		(Clay_ErrorHandler){HandleClayErrors, NULL});
-	
-	fonts = (char *[]){"Sans", "Sans"};
-	Clay_SetMeasureTextFunction(Clay_Cairo_MeasureText, fonts);
-	
-	running = true;
-	needsRedraw = true;
-	frameDelay = (struct timespec){0, 16666667}; // 60 FPS
-	
-	while (running)
-	{
-		while (XPending(display))
-		{
-			XEvent event;
-			XNextEvent(display, &event);
-			
-			switch (event.type)
-			{
-				case Expose:
-					needsRedraw = true;
-					break;
-					
-				case ButtonPress:
-					if (event.xbutton.button == Button1)
-					{
-						ft_printf("Left click received\n");
-						if (check_endgame(game) == 1)
-						{
-							ft_printf("Game is over, starting new game\n");
-							// Start new game
-							t_game *new_game = init_new_game(game->rows, game->cols);
-							if (new_game)
-							{
-								free_game(game);
-								game = new_game;
-								ft_printf("New game started\n");
-							}
-						}
-						else if (game->current_player == PLAYER)
-						{
-							ft_printf("Processing player move\n");
-							int col = get_column_at_pos(event.xbutton.x, event.xbutton.y);
-							ft_printf("Selected column: %d\n", col);
-							
-							if (insert_pawn(game, col))
-							{
-								ft_printf("Pawn inserted in column %d\n", col);
-								needsRedraw = true;
-								XFlush(display);
-								
-								if (!check_endgame(game))
-								{
-									ft_printf("Game continues, AI's turn\n");
-									// Delay before AI move
-									struct timespec delay = {0, 300000000}; // 0.3s
-									nanosleep(&delay, NULL);
-									
-									ai_make_move(game);
-									check_endgame(game);
-								}
-							}
-							else
-							{
-								ft_printf("Failed to insert pawn\n");
-							}
-						}
-						else
-						{
-							ft_printf("Not player's turn\n");
-						}
-						needsRedraw = true;
-					}
-					break;
-					
-				case ClientMessage:
-					if ((Atom)event.xclient.data.l[0] == wmDeleteWindow)
-						running = false;
-					break;
-			}
-		}
-		
-		if (needsRedraw)
-		{
-			// Clear screen
-			cairo_save(cr);
-			cairo_set_source_rgb(cr, 0.1, 0.1, 0.15);
-			cairo_paint(cr);
-			cairo_restore(cr);
-			
-			// Draw UI
-			createUI(game);
-			Clay_RenderCommandArray commands = Clay_EndLayout();
-			Clay_Cairo_Render(commands, fonts);
-			
-			cairo_surface_flush(surface);
-			XFlush(display);
-			needsRedraw = false;
-		}
-		
-		nanosleep(&frameDelay, NULL);
-	}
-	
-	free(memory);
-	cairo_destroy(cr);
-	cairo_surface_destroy(surface);
-	XCloseDisplay(display);
+    t_window_context *ctx = init_window();
+    if (!ctx)
+        return;
+        
+    run_game_loop(ctx, game);
+    cleanup_window(ctx);
 }

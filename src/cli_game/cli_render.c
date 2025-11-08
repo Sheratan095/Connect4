@@ -11,6 +11,8 @@
 */
 void	cli_render_board(t_game *game)
 {
+	ft_print_char_matrix((const char **)game->board);
+
 	ft_printf("\033[3J\033[H\033[2J");
 	int	row;
 	int	col;

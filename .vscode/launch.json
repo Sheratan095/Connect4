@@ -9,7 +9,7 @@
 		"type": "cppdbg",
 		"request": "launch",
 		"program": "${workspaceFolder}/connect4",
-		"args": [],
+		"args": ["6", "7"],
 		"stopAtEntry": false,
 		"cwd": "${fileDirname}",
 		"environment": [],
