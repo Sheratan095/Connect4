@@ -21,6 +21,7 @@ void	start_game(t_game *game)
 			}
 		}
 
+		
 		cli_render_board(game);
 
 		if (check_endgame(game))
