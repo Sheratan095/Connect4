@@ -1,9 +1,10 @@
 #include "connect4.h"
 
+int			player_make_move(t_game *game);
 static void	switch_player(t_game *game);
 static int	check_endgame(t_game *game);
 
-void	start_game(t_game *game)
+void	start_game_cli(t_game *game)
 {
 	cli_render_board(game);
 
@@ -21,7 +22,6 @@ void	start_game(t_game *game)
 			}
 		}
 
-		
 		cli_render_board(game);
 
 		if (check_endgame(game))

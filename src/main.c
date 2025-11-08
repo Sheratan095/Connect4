@@ -19,7 +19,7 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 
-	start_game(new_game);
+	start_game_cli(new_game);
 
 	free_game(new_game);
 

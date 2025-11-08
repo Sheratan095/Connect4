@@ -14,11 +14,10 @@ VALGRIND =  valgrind --leak-check=full --track-origins=yes --track-fds=yes --sho
 INCLUDES = -I$(COREKIT_PATH)/includes -I./includes
 
 SRC = src/main.c \
-	src/rendering/cli.c \
-	src/rendering/ui.c \
-	src/game/game.c \
-	src/game/ai.c \
-	src/game/player.c \
+	src/cli_game/cli_render.c \
+	src/cli_game/cli_game.c \
+	src/cli_game/cli_player.c \
+	src/ai.c \
 	src/utils.c
 
 FLAGS	= -g

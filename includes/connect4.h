@@ -50,13 +50,11 @@ typedef struct	s_game
 
 void			cli_render_board(t_game *game);
 
-void			start_game(t_game *game);
+void			start_game_cli(t_game *game);
 
 void			ai_make_move(t_game *game);
 
 int				insert_pawn(t_game *game, int column);
-
-int				player_make_move(t_game *game);
 
 //--------------------HELPER FUNCTIONS--------------------//
 
