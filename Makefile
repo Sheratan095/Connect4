@@ -18,11 +18,13 @@ SRC = src/main.c \
 	src/cli_game/cli_game.c \
 	src/cli_game/cli_player.c \
 	src/ui_game/ui_game.c \
+	src/ui_game/clay_render.c \
 	src/ai.c \
 	src/utils.c
 
 FLAGS	= -g
 FLAGS	+= -Wall -Werror -Wextra
+FLAGS += `pkg-config --libs cairo x11` -lm `pkg-config --cflags cairo x11`
 FLAGS	+= -DPAWN_1=\"$(PAWN_1)\" -DPAWN_2=\"$(PAWN_2)\"
 FLAGS	+= -DMAX_ROWS=19 -DMAX_COLS=20
 

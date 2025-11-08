@@ -6,7 +6,7 @@ void	start_game_cli(t_game *game)
 {
 	cli_render_board(game);
 
-	while (true)
+	while (TRUE)
 	{
 		if (game->current_player == AI)
 			ai_make_move(game);

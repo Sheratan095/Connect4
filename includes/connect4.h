@@ -2,6 +2,31 @@
 #define CONNECT4_H
 
 #include "corekit.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <unistd.h>
+
+#define _POSIX_C_SOURCE 200809L
+#include <math.h>
+#include <stdint.h>
+#include <time.h>
+#include <cairo/cairo.h>
+#include <cairo/cairo-xlib.h>
+#include <X11/Xlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <unistd.h>
+#define BOARD_ROWS 6
+#define BOARD_COLS 7
+#define CELL_SIZE 70
+#define WINDOW_WIDTH 600
+#define WINDOW_HEIGHT 650
+#include "clay.h"
+#include "clay_render.h"
 
 #ifndef PAWN_1
 	#define PAWN_1 "🔴"
@@ -45,6 +70,10 @@ typedef struct	s_game
 	t_player	current_player;
 	int			rows;
 	int			cols;
+	t_bool		game_over;
+	t_player	winner;
+	int			last_row;;
+	int			last_col;
 }	t_game;
 
 void			start_game_cli(t_game *game);
