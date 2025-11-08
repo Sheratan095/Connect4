@@ -32,9 +32,9 @@ t_moves valid_moves(t_game *game)
 	return result;
 }
 
-static u_int64_t evaluate_window(char *window, int piece, int window_length)
+static int64_t evaluate_window(char *window, int piece, int window_length)
 {
-	u_int64_t score = 0;
+	int64_t score = 0;
 	int piece_count = 0;
 	int opponent_count = 0;
 	int opponent_piece = (piece == PLAYER) ? AI : PLAYER;
@@ -74,18 +74,21 @@ int get_next_open_row(t_game *game, int col)
 	return -1; // Column is full
 }
 
-u_int64_t score_position(t_game *game)
+int64_t score_position(t_game *game)
 {
-	u_int64_t score = 0;
+	int64_t score = 0;
 	int window_length = 4;
-	int piece = game->current_player;
 
-	// Score centre column
+	// Score from AI's perspective
+	int ai_piece = AI;
+	int player_piece = PLAYER;
+
+	// Score centre column (center control is important)
 	int centre_col = game->cols / 2;
 	int centre_count = 0;
 	for (int row = 0; row < game->rows; row++)
 	{
-		if (game->board[row][centre_col] == piece)
+		if (game->board[row][centre_col] == (char)ai_piece)
 			centre_count++;
 	}
 	score += centre_count * 3;
@@ -98,7 +101,8 @@ u_int64_t score_position(t_game *game)
 			char window[window_length];
 			for (int i = 0; i < window_length; i++)
 				window[i] = game->board[r][c + i];
-			score += evaluate_window(window, piece, window_length);
+			score += evaluate_window(window, ai_piece, window_length);
+			score -= evaluate_window(window, player_piece, window_length);
 		}
 	}
 
@@ -110,7 +114,8 @@ u_int64_t score_position(t_game *game)
 			char window[window_length];
 			for (int i = 0; i < window_length; i++)
 				window[i] = game->board[r + i][c];
-			score += evaluate_window(window, piece, window_length);
+			score += evaluate_window(window, ai_piece, window_length);
+			score -= evaluate_window(window, player_piece, window_length);
 		}
 	}
 
@@ -122,7 +127,8 @@ u_int64_t score_position(t_game *game)
 			char window[window_length];
 			for (int i = 0; i < window_length; i++)
 				window[i] = game->board[r + i][c + i];
-			score += evaluate_window(window, piece, window_length);
+			score += evaluate_window(window, ai_piece, window_length);
+			score -= evaluate_window(window, player_piece, window_length);
 		}
 	}
 
@@ -134,7 +140,8 @@ u_int64_t score_position(t_game *game)
 			char window[window_length];
 			for (int i = 0; i < window_length; i++)
 				window[i] = game->board[r - i][c + i];
-			score += evaluate_window(window, piece, window_length);
+			score += evaluate_window(window, ai_piece, window_length);
+			score -= evaluate_window(window, player_piece, window_length);
 		}
 	}
 
@@ -148,9 +155,9 @@ bool winning_move(t_game *game, t_player piece)
 		for (int j = 0; j < game->cols - 3; j++)
 		{
 			if (game->board[i][j] == (char)piece &&
-				game->board[i][j + 1] == (char)piece &&
-				game->board[i][j + 2] == (char)piece &&
-				game->board[i][j + 3] == (char)piece)
+					game->board[i][j + 1] == (char)piece &&
+					game->board[i][j + 2] == (char)piece &&
+					game->board[i][j + 3] == (char)piece)
 				return true;
 		}
 	}
@@ -159,9 +166,9 @@ bool winning_move(t_game *game, t_player piece)
 		for (int j = 0; j < game->cols; j++)
 		{
 			if (game->board[i][j] == (char)piece &&
-				game->board[i + 1][j] == (char)piece &&
-				game->board[i + 2][j] == (char)piece &&
-				game->board[i + 3][j] == (char)piece)
+					game->board[i + 1][j] == (char)piece &&
+					game->board[i + 2][j] == (char)piece &&
+					game->board[i + 3][j] == (char)piece)
 				return true;
 		}
 	}
@@ -170,21 +177,22 @@ bool winning_move(t_game *game, t_player piece)
 		for (int j = 0; j < game->cols - 3; j++)
 		{
 			if (game->board[i][j] == (char)piece &&
-				game->board[i + 1][j + 1] == (char)piece &&
-				game->board[i + 2][j + 2] == (char)piece &&
-				game->board[i + 3][j + 3] == (char)piece)
+					game->board[i + 1][j + 1] == (char)piece &&
+					game->board[i + 2][j + 2] == (char)piece &&
+					game->board[i + 3][j + 3] == (char)piece)
 				return true;
 		}
 	}
 
-	for (int i = 0; i < game->rows - 3; i++)
+	// Negative diagonal (top-left to bottom-right, starting from top)
+	for (int i = 3; i < game->rows; i++)
 	{
 		for (int j = 0; j < game->cols - 3; j++)
 		{
 			if (game->board[i][j] == (char)piece &&
-				game->board[i - 1][j + 1] == (char)piece &&
-				game->board[i - 2][j + 2] == (char)piece &&
-				game->board[i - 3][j + 3] == (char)piece)
+					game->board[i - 1][j + 1] == (char)piece &&
+					game->board[i - 2][j + 2] == (char)piece &&
+					game->board[i - 3][j + 3] == (char)piece)
 				return true;
 		}
 	}
@@ -193,10 +201,13 @@ bool winning_move(t_game *game, t_player piece)
 
 bool is_terminal_node(t_game *game)
 {
-	return winning_move(game, AI) || winning_move(game, PLAYER) || valid_moves(game).count == 0;
+	t_moves moves = valid_moves(game);
+	bool result = winning_move(game, AI) || winning_move(game, PLAYER) || moves.count == 0;
+	free(moves.positions);
+	return result;
 }
 
-t_pos minmax(t_game *game, int depth, u_int64_t alpha, u_int64_t beta, bool maximizingPlayer)
+t_pos minmax(t_game *game, int depth, int64_t alpha, int64_t beta, bool maximizingPlayer)
 {
 	t_moves valid_loc = valid_moves(game);
 
@@ -207,102 +218,134 @@ t_pos minmax(t_game *game, int depth, u_int64_t alpha, u_int64_t beta, bool maxi
 		{
 			if (winning_move(game, AI))
 			{
-				return (t_pos){-1, -1, 99999999};
+				free(valid_loc.positions);
+				return (t_pos){.x = -1, .y = -1, .score = 100000000};
 			}
 			else if (winning_move(game, PLAYER))
 			{
-				return (t_pos){-1, -1, -99999999};
+				free(valid_loc.positions);
+				return (t_pos){.x = -1, .y = -1, .score = -100000000};
 			}
-			else
+			else // Draw
 			{
-				return (t_pos){-1, -1, 0};
+				free(valid_loc.positions);
+				return (t_pos){.x = -1, .y = -1, .score = 0};
 			}
 		}
-		else
+		else // Depth reached
 		{
-			u_int64_t score = score_position(game);
-			return (t_pos){-1, -1, score};
+			int64_t score = score_position(game);
+			free(valid_loc.positions);
+			return (t_pos){.x = -1, .y = -1, .score = score};
 		}
 	}
 
-	if (maximizingPlayer)
+	if (maximizingPlayer) // AI's turn
 	{
-		u_int64_t value = 0;
-		t_pos best_move = {-1, -1, -99999999};
+		int64_t value = -999999999;
+		t_pos best_move = {.x = valid_loc.positions[0].x, .y = -1, .score = -999999999};
 
 		for (int i = 0; i < valid_loc.count; i++)
 		{
-			int row = get_next_open_row(game, valid_loc.positions[i].x);
-
-			t_game *temp_game = copy_game(game);
-			insert_pawn(temp_game, valid_loc.positions[i].x);
-			t_pos new_score = minmax(temp_game, depth - 1, alpha, beta, false);
-			if (new_score.score > value)
-			{
-				value = new_score.score;
-				best_move = (t_pos){valid_loc.positions[i].x, row, value};
-			}
-			free_game(temp_game);
-			alpha = (alpha > value) ? alpha : value;
-			if (alpha >= beta)
-				break;
-		}
-		return best_move;
-	}
-	else
-	{
-		u_int64_t value = 99999999;
-		t_pos best_move = {-1, -1, 99999999};
-
-		for (int i = 0; i < valid_loc.count; i++)
-		{
-			int row = get_next_open_row(game, valid_loc.positions[i].x);
+			int col = valid_loc.positions[i].x;
+			int row = get_next_open_row(game, col);
 
 			t_game *temp_game = copy_game(game);
 			if (temp_game == NULL)
 				continue;
-			insert_pawn(temp_game, valid_loc.positions[i].x);
+
+			// Make the move
+			temp_game->current_player = AI;
+			insert_pawn(temp_game, col);
+
+			// Recursively call minmax for opponent's turn
+			temp_game->current_player = PLAYER;
+			t_pos new_score = minmax(temp_game, depth - 1, alpha, beta, false);
+
+			free_game(temp_game);
+
+			if (new_score.score > value)
+			{
+				value = new_score.score;
+				best_move = (t_pos){.x = col, .y = row, .score = value};
+			}
+
+			alpha = (alpha > value) ? alpha : value;
+			if (alpha >= beta)
+				break; // Beta cutoff
+		}
+		free(valid_loc.positions);
+		return best_move;
+	}
+	else // PLAYER's turn (minimizing)
+	{
+		int64_t value = 999999999;
+		t_pos best_move = {.x = valid_loc.positions[0].x, .y = -1, .score = 999999999};
+
+		for (int i = 0; i < valid_loc.count; i++)
+		{
+			int col = valid_loc.positions[i].x;
+			int row = get_next_open_row(game, col);
+
+			t_game *temp_game = copy_game(game);
+			if (temp_game == NULL)
+				continue;
+
+			// Make the move
+			temp_game->current_player = PLAYER;
+			insert_pawn(temp_game, col);
+
+			// Recursively call minmax for AI's turn
+			temp_game->current_player = AI;
 			t_pos new_score = minmax(temp_game, depth - 1, alpha, beta, true);
+
+			free_game(temp_game);
+
 			if (new_score.score < value)
 			{
 				value = new_score.score;
-				best_move = (t_pos){valid_loc.positions[i].x, row, value};
+				best_move = (t_pos){.x = col, .y = row, .score = value};
 			}
-			free_game(temp_game);
+
 			beta = (beta < value) ? beta : value;
 			if (alpha >= beta)
-				break;
+				break; // Alpha cutoff
 		}
+		free(valid_loc.positions);
 		return best_move;
 	}
 }
 
-bool is_empty(char **board)
+bool is_empty(t_game *game)
 {
-	for (int col = 0; col < 7; col++)
+	// Check if any position on the board has a piece
+	for (int row = 0; row < game->rows; row++)
 	{
-		if (board[5][col] != NULL_PLAYER)
-			return false;
+		for (int col = 0; col < game->cols; col++)
+		{
+			if (game->board[row][col] != NULL_PLAYER)
+				return false;
+		}
 	}
 	return true;
 }
 
 void ai_make_move(t_game *game)
 {
-	// Check if board is empty (first move) - check if center column is empty
-	bool board_empty = is_empty(game->board);
+	// Check if board is empty (first move)
+	bool board_empty = is_empty(game);
 
 	if (board_empty)
 	{
-		ft_printf("AI is making the first move in the center column.\n");
 		int mid_col = game->cols / 2;
 		insert_pawn(game, mid_col);
+
 		return;
 	}
-	ft_printf("AI is thinking...\n");
 
-	t_pos best_move = minmax(game, 5, -99999999, 99999999, true);
-	ft_printf("AI chooses column %d\n", best_move.x);
+	// Call minmax with AI as maximizing player (true)
+	t_pos best_move = minmax(game, DEPTH, -999999999, 999999999, true);
+
 	if (insert_pawn(game, best_move.x) == -1)
 		ft_printf("AI attempted an invalid move in column %d\n", best_move.x);
 }

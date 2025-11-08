@@ -29,11 +29,11 @@
 #include "clay_render.h"
 
 #ifndef PAWN_1
-#define PAWN_1 "🔴"
+#define PAWN_1 " 🔴"
 #endif
 
 #ifndef PAWN_2
-#define PAWN_2 "🟡"
+#define PAWN_2 " 🟡"
 #endif
 
 #define MIN_ROWS 6
@@ -45,6 +45,10 @@
 
 #ifndef MAX_COLS
 #define MAX_COLS 20
+#endif
+
+#ifndef DEPTH
+#define DEPTH 6
 #endif
 
 typedef enum e_player
@@ -66,7 +70,7 @@ typedef struct s_pos
 {
 	int x;
 	int y;
-	u_int64_t score;
+	int64_t score;
 } t_pos;
 
 typedef struct s_moves
