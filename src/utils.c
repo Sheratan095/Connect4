@@ -76,10 +76,9 @@ int insert_pawn(t_game *game, int column)
 	{
 		if (game->board[row][column] == NULL_PLAYER) // Check for empty cell
 		{
-			game->board[row][column] = game->current_player + '0'; // Convert to character
-			game->last_row = row;								   // Update last move position
+			game->board[row][column] = game->current_player; // Use player enum value directly
+			game->last_row = row;							 // Update last move position
 			game->last_col = column;
-			switch_player(game); // Switch to next player
 			return (row);
 		}
 	}
