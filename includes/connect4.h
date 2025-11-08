@@ -47,8 +47,6 @@
 	#define MAX_COLS 20
 #endif
 
-#define EMPTY_BOARD_CHAR '.'
-
 typedef enum	e_player
 {
 	NULL_PLAYER = 0,

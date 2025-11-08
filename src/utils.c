@@ -34,7 +34,7 @@ t_game	*init_new_game(int rows, int cols)
 		}
 		// Initialize row with empty cells
 		for (int j = 0; j < cols; j++)
-			game->board[i][j] = '.';
+			game->board[i][j] = NULL_PLAYER;
 		game->board[i][cols] = '\0';  // Null terminate the string
 	}
 	game->board[rows] = NULL;  // Null terminate the array
@@ -55,7 +55,7 @@ int	insert_pawn(t_game *game, int column)
 {
 	for (int row = game->rows - 1; row >= 0; row--)
 	{
-		if (game->board[row][column] == '.')  // Check for empty cell
+		if (game->board[row][column] == NULL_PLAYER)  // Check for empty cell
 		{
 			game->board[row][column] = game->current_player + '0';  // Convert to character
 			game->last_row = row;  // Update last move position
