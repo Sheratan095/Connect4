@@ -22,7 +22,7 @@ SRC = src/main.c \
 	src/ai.c \
 	src/utils.c
 
-FLAGS	= -g
+FLAGS	= -o3
 FLAGS	+= -Wall -Werror -Wextra
 FLAGS	+= `pkg-config --libs cairo x11` -lm `pkg-config --cflags cairo x11`
 FLAGS	+= -DPAWN_1=\"$(PAWN_1)\" -DPAWN_2=\"$(PAWN_2)\"
