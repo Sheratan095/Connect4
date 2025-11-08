@@ -11,6 +11,9 @@
 	#define PAWN_2 "🟡"
 #endif
 
+#define MIN_LINES 6
+#define MIN_COLS 7
+
 #define EMPTY_BOARD_CHAR '.'
 
 typedef enum	e_player
