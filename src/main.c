@@ -12,14 +12,17 @@ int	main(int argc, char **argv)
 	int	rows = ft_atoi(argv[1]);
 	int	cols = ft_atoi(argv[2]);
 
-	t_game	*new_game = init_new_game(rows, cols, gui_mode);
+	t_game	*new_game = init_new_game(rows, cols);
 	if (!new_game)
 	{
 		ft_printf("Error: Could not start a new game.\n");
 		return (1);
 	}
 
-	start_game_cli(new_game);
+	if (gui_mode)
+		start_game_ui(new_game);
+	else
+		start_game_cli(new_game);
 
 	free_game(new_game);
 

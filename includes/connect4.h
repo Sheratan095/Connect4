@@ -45,12 +45,11 @@ typedef struct	s_game
 	t_player	current_player;
 	int			rows;
 	int			cols;
-	t_bool		gui_mode;
 }	t_game;
 
-void			cli_render_board(t_game *game);
-
 void			start_game_cli(t_game *game);
+
+void			start_game_ui(t_game *game);
 
 void			ai_make_move(t_game *game);
 
@@ -58,11 +57,16 @@ int				insert_pawn(t_game *game, int column);
 
 //--------------------HELPER FUNCTIONS--------------------//
 
-t_game			*init_new_game(int rows, int cols, t_bool gui_mode);
+t_game			*init_new_game(int rows, int cols);
 
 void			free_game(t_game *game);
 
 t_game_result	get_winner(t_game *game);
 
+void			switch_player(t_game *game);
+
+int				check_endgame(t_game *game);
+
+void			cli_render_board(t_game *game);
 
 #endif

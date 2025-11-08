@@ -1,6 +1,6 @@
 #include "connect4.h"
 
-t_game	*init_new_game(int rows, int cols, t_bool gui_mode)
+t_game	*init_new_game(int rows, int cols)
 {
 	t_game	*game = malloc(sizeof(t_game));
 	if (!game)
@@ -8,7 +8,6 @@ t_game	*init_new_game(int rows, int cols, t_bool gui_mode)
 
 	game->rows = rows;
 	game->cols = cols;
-	game->gui_mode = gui_mode;
 
 	game->current_player = PLAYER;
 
@@ -129,4 +128,36 @@ t_game_result	get_winner(t_game *game)
 	}
 
 	return (NO_WINNER);
+}
+
+// Change the current player
+void	switch_player(t_game *game)
+{
+	if (game->current_player == PLAYER)
+		game->current_player = AI;
+	else
+		game->current_player = PLAYER;
+}
+
+int	check_endgame(t_game *game)
+{
+	t_game_result	result = get_winner(game);
+
+	if (result == PLAYER_WINS)
+	{
+		ft_printf("Player %s wins!\n", PAWN_1);
+		return (1);
+	}
+	if (result == AI_WINS)
+	{
+		ft_printf("Player %s wins!\n", PAWN_2);
+		return (1);
+	}
+	if (result == DRAW)
+	{
+		ft_printf("The game is a draw!\n");
+		return (1);
+	}
+
+	return (0);
 }

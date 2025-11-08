@@ -1,8 +1,6 @@
 #include "connect4.h"
 
-int			player_make_move(t_game *game);
-static void	switch_player(t_game *game);
-static int	check_endgame(t_game *game);
+int	player_make_move(t_game *game);
 
 void	start_game_cli(t_game *game)
 {
@@ -29,36 +27,4 @@ void	start_game_cli(t_game *game)
 
 		switch_player(game);
 	}
-}
-
-// Change the current player
-static void	switch_player(t_game *game)
-{
-	if (game->current_player == PLAYER)
-		game->current_player = AI;
-	else
-		game->current_player = PLAYER;
-}
-
-static int	check_endgame(t_game *game)
-{
-	t_game_result	result = get_winner(game);
-
-	if (result == PLAYER_WINS)
-	{
-		ft_printf("Player %s wins!\n", PAWN_1);
-		return (1);
-	}
-	if (result == AI_WINS)
-	{
-		ft_printf("Player %s wins!\n", PAWN_2);
-		return (1);
-	}
-	if (result == DRAW)
-	{
-		ft_printf("The game is a draw!\n");
-		return (1);
-	}
-
-	return (0);
 }

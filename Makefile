@@ -17,6 +17,7 @@ SRC = src/main.c \
 	src/cli_game/cli_render.c \
 	src/cli_game/cli_game.c \
 	src/cli_game/cli_player.c \
+	src/ui_game/ui_game.c \
 	src/ai.c \
 	src/utils.c
 
@@ -78,7 +79,7 @@ remove_libs:
 	@echo "$(RED)[COREKIT]:\t COREKIT REMOVED$(RESET)";
 	@rm -fr lib/
 
-args = 10 10
+args = 10 10 --gui
 
 test: all
 	 ./$(NAME) $(args)
