@@ -51,7 +51,7 @@ typedef struct s_pos
 {
 	int x;
 	int y;
-	int score;
+	u_int64_t score;
 } t_pos;
 
 typedef struct s_moves

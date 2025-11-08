@@ -41,9 +41,9 @@ static u_int64_t evaluate_window(char *window, int piece, int window_length)
 
 	for (int i = 0; i < window_length; i++)
 	{
-		if (window[i] == piece)
+		if (window[i] == (char)piece)
 			piece_count++;
-		else if (window[i] == opponent_piece)
+		else if (window[i] == (char)opponent_piece)
 			opponent_count++;
 	}
 
@@ -147,10 +147,10 @@ t_bool winning_move(t_game *game, t_player piece)
 	{
 		for (int j = 0; j < game->cols - 3; j++)
 		{
-			if (game->board[i][j] == piece &&
-					game->board[i][j + 1] == piece &&
-					game->board[i][j + 2] == piece &&
-					game->board[i][j + 3] == piece)
+			if (game->board[i][j] == (char)piece &&
+					game->board[i][j + 1] == (char)piece &&
+					game->board[i][j + 2] == (char)piece &&
+					game->board[i][j + 3] == (char)piece)
 				return true;
 		}
 	}
@@ -158,10 +158,10 @@ t_bool winning_move(t_game *game, t_player piece)
 	{
 		for (int j = 0; j < game->cols; j++)
 		{
-			if (game->board[i][j] == piece &&
-					game->board[i + 1][j] == piece &&
-					game->board[i + 2][j] == piece &&
-					game->board[i + 3][j] == piece)
+			if (game->board[i][j] == (char)piece &&
+					game->board[i + 1][j] == (char)piece &&
+					game->board[i + 2][j] == (char)piece &&
+					game->board[i + 3][j] == (char)piece)
 				return true;
 		}
 	}
@@ -169,10 +169,10 @@ t_bool winning_move(t_game *game, t_player piece)
 	{
 		for (int j = 0; j < game->cols - 3; j++)
 		{
-			if (game->board[i][j] == piece &&
-					game->board[i + 1][j + 1] == piece &&
-					game->board[i + 2][j + 2] == piece &&
-					game->board[i + 3][j + 3] == piece)
+			if (game->board[i][j] == (char)piece &&
+					game->board[i + 1][j + 1] == (char)piece &&
+					game->board[i + 2][j + 2] == (char)piece &&
+					game->board[i + 3][j + 3] == (char)piece)
 				return true;
 		}
 	}
@@ -181,10 +181,10 @@ t_bool winning_move(t_game *game, t_player piece)
 	{
 		for (int j = 0; j < game->cols - 3; j++)
 		{
-			if (game->board[i][j] == piece &&
-					game->board[i - 1][j + 1] == piece &&
-					game->board[i - 2][j + 2] == piece &&
-					game->board[i - 3][j + 3] == piece)
+			if (game->board[i][j] == (char)piece &&
+					game->board[i - 1][j + 1] == (char)piece &&
+					game->board[i - 2][j + 2] == (char)piece &&
+					game->board[i - 3][j + 3] == (char)piece)
 				return true;
 		}
 	}
@@ -230,7 +230,6 @@ t_pos minmax(t_game *game, int depth, u_int64_t alpha, u_int64_t beta, t_bool ma
 		u_int64_t value = 0;
 		t_pos best_move = {-1, -1, -99999999};
 
-		int column = valid_loc.positions[0].x; // Default move
 		for (int i = 0; i < valid_loc.count; i++)
 		{
 			int row = get_next_open_row(game, valid_loc.positions[i].x);
@@ -260,6 +259,8 @@ t_pos minmax(t_game *game, int depth, u_int64_t alpha, u_int64_t beta, t_bool ma
 			int row = get_next_open_row(game, valid_loc.positions[i].x);
 
 			t_game *temp_game = copy_game(game);
+			if (temp_game == NULL)
+				continue;
 			insert_pawn(temp_game, valid_loc.positions[i].x);
 			t_pos new_score = minmax(temp_game, depth - 1, alpha, beta, true);
 			if (new_score.score < value)
@@ -276,18 +277,31 @@ t_pos minmax(t_game *game, int depth, u_int64_t alpha, u_int64_t beta, t_bool ma
 	}
 }
 
+t_bool is_empty(char **board)
+{
+	for (int col = 0; col < 7; col++)
+	{
+		if (board[5][col] != EMPTY_BOARD_CHAR)
+			return false;
+	}
+	return true;
+}
+
 void ai_make_move(t_game *game)
 {
-	if (is_empty(game->board))
+	// Check if board is empty (first move) - check if center column is empty
+	t_bool board_empty = is_empty(game->board);
+
+	if (board_empty)
 	{
 		int mid_col = game->cols / 2;
 		insert_pawn(game, mid_col);
 		return;
 	}
+	ft_printf("AI is thinking...\n");
 
-	if (player_make_move(game) == -1)
-	{
-		ft_printf("Game exited by player.\n");
-		return;
-	}
+	t_pos best_move = minmax(game, 5, -99999999, 99999999, true);
+	ft_printf("AI chooses column %d\n", best_move.x);
+	if (insert_pawn(game, best_move.x) == -1)
+		ft_printf("AI attempted an invalid move in column %d\n", best_move.x);
 }
