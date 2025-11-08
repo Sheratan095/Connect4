@@ -6,8 +6,6 @@ PAWN_1 = 🔴
 PAWN_2 = 🟡
 
 COREKIT_PATH = ./lib/corekit
-# MLX_PATH = ./lib/mlx
-MLX_PATH =
 
 VALGRIND =  valgrind --leak-check=full --track-origins=yes --track-fds=yes --show-leak-kinds=all
 
@@ -24,7 +22,7 @@ SRC = src/main.c \
 
 FLAGS	= -g
 FLAGS	+= -Wall -Werror -Wextra
-FLAGS += `pkg-config --libs cairo x11` -lm `pkg-config --cflags cairo x11`
+FLAGS	+= `pkg-config --libs cairo x11` -lm `pkg-config --cflags cairo x11`
 FLAGS	+= -DPAWN_1=\"$(PAWN_1)\" -DPAWN_2=\"$(PAWN_2)\"
 FLAGS	+= -DMAX_ROWS=19 -DMAX_COLS=20
 
@@ -55,14 +53,8 @@ fclean: clean
 		echo "$(RED)[COREKIT]:\t COREKIT FCLEAN$(RESET)"; \
 	fi
 
-re: download fclean corekit_pull all
+re: download fclean all
 
-#used to ensure that corekit is always up to date
-corekit_pull:
-	@git -C lib/corekit/ pull --quiet
-	@echo "$(GREEN)[COREKIT]:\t PULLED$(RESET)";
-
-MLX_LINK=
 download:
 	@if [ -d "lib" ]; then \
 		echo "$(RED)[LIB]:\t\t LIB FOLDER ALREADY EXISTS$(RESET)"; \
