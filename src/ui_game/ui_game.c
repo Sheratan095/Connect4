@@ -7,11 +7,11 @@ Clay_Color getPlayerColor(char player)
 	switch ((int)player)
 	{
 	case PLAYER:															 // PLAYER = 1
-		return (Clay_Color){220, 0, 0, 255};		 // Bright Red
+		return (Clay_Color){235, 69, 95, 255};   // Modern Red
 	case AI:																	 // AI = 2
-		return (Clay_Color){255, 215, 0, 255};	 // Gold
+		return (Clay_Color){247, 183, 49, 255};  // Warm Yellow
 	default:																	 // NULL_PLAYER = 0
-		return (Clay_Color){230, 230, 230, 255}; // Light Grey
+		return (Clay_Color){45, 45, 60, 255};    // Dark Gray
 	}
 }
 
@@ -53,8 +53,8 @@ void createUI(t_game *game)
 										.sizing = {CLAY_SIZING_GROW(), CLAY_SIZING_GROW()},
 										.layoutDirection = CLAY_TOP_TO_BOTTOM,
 										.childAlignment = {CLAY_ALIGN_X_CENTER, CLAY_ALIGN_Y_CENTER},
-										.childGap = 16},
-								.backgroundColor = {30, 30, 40, 255}})
+										.childGap = 24},
+								.backgroundColor = {28, 28, 35, 255}})
 	{
 		// Title
 		CLAY_TEXT(CLAY_STRING("Connect 4"),
@@ -79,8 +79,9 @@ void createUI(t_game *game)
 		CLAY_AUTO_ID({.layout = {
 											.sizing = {CLAY_SIZING_FIXED(game->cols * CELL_SIZE), CLAY_SIZING_FIXED(game->rows * CELL_SIZE)},
 											.layoutDirection = CLAY_TOP_TO_BOTTOM},
-									.backgroundColor = {40, 80, 160, 255},
-									.cornerRadius = CLAY_CORNER_RADIUS(12)})
+									.backgroundColor = {50, 50, 70, 255},
+									.cornerRadius = CLAY_CORNER_RADIUS(16),
+									.border = {.color = {60, 60, 80, 255}, .width = {.left = 4, .right = 4, .top = 4, .bottom = 4}}})
 		{
 			for (int row = 0; row < game->rows; row++)
 			{
@@ -98,11 +99,14 @@ void createUI(t_game *game)
 						// Combine padding and cell into single element to reduce Clay element count
 						CLAY_AUTO_ID({.layout = {
 															.sizing = {CLAY_SIZING_FIXED(CELL_SIZE), CLAY_SIZING_FIXED(CELL_SIZE)},
-															.padding = {6, 6, 6, 6},
+															.padding = {8, 8, 8, 8},
 															.childAlignment = {CLAY_ALIGN_X_CENTER, CLAY_ALIGN_Y_CENTER}},
 													.backgroundColor = cellColor,
-													.cornerRadius = CLAY_CORNER_RADIUS(CELL_SIZE / 2 - 8),
-													.border = {.color = {255, 255, 255, 255}, .width = {.left = isLast ? 3 : 0, .right = isLast ? 3 : 0, .top = isLast ? 3 : 0, .bottom = isLast ? 3 : 0}}}) {}
+													.cornerRadius = CLAY_CORNER_RADIUS(CELL_SIZE / 2 - 6),
+													.border = {
+														.color = isLast ? (Clay_Color){255, 255, 255, 200} : (Clay_Color){40, 40, 55, 255}, 
+														.width = {.left = isLast ? 4 : 2, .right = isLast ? 4 : 2, .top = isLast ? 4 : 2, .bottom = isLast ? 4 : 2}
+													}}) {}
 					}
 				}
 			}

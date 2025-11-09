@@ -342,8 +342,12 @@ bool is_empty(t_game *game)
 	return true;
 }
 
-void ai_make_move(t_game *game)
+void	ai_make_move(t_game *game)
 {
+	// Delay before AI move
+	// struct timespec delay = {0, 300000000}; // 0.3s
+	// nanosleep(&delay, NULL);
+
 	// Check if board is empty (first move)
 	bool board_empty = is_empty(game);
 
