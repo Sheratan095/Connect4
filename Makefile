@@ -75,7 +75,7 @@ remove_libs:
 	@echo "$(RED)[COREKIT]:\t COREKIT REMOVED$(RESET)";
 	@rm -fr lib/
 
-args = 10 10
+args = 10 10 --gui
 
 test: all
 	 ./$(NAME) $(args)

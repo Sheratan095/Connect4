@@ -2,6 +2,8 @@
 #include "ui_window.h"
 #include "ui_game.h"
 
+static void	redraw(t_window_context *ctx, t_game *game);
+
 static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEvent *event)
 {
 	if (event->button != Button1)
@@ -53,6 +55,7 @@ static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEven
 					ft_printf("Switching to AI turn\n");
 				}
 				XFlush(ctx->display);
+				redraw(ctx, game);
 			}
 			else
 			{
@@ -84,13 +87,30 @@ static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEven
 			ft_printf("Switching back to player turn\n");
 		}
 		XFlush(ctx->display);
+		redraw(ctx, game);
 	}
+}
+
+static void	redraw(t_window_context *ctx, t_game *game)
+{
+	// Clear screen
+	cairo_save(ctx->cr);
+	cairo_set_source_rgb(ctx->cr, 0.1, 0.1, 0.15);
+	cairo_paint(ctx->cr);
+	cairo_restore(ctx->cr);
+
+	// Draw UI
+	createUI(game);
+	Clay_RenderCommandArray commands = Clay_EndLayout();
+	Clay_Cairo_Render(commands, ctx->fonts);
+
+	cairo_surface_flush(ctx->surface);
+	XFlush(ctx->display);
 }
 
 void run_game_loop(t_window_context *ctx, t_game *game)
 {
 	bool running = true;
-	bool needsRedraw = true;
 	struct timespec frameDelay = {0, 16666667}; // 60 FPS
 
 	while (running)
@@ -103,38 +123,20 @@ void run_game_loop(t_window_context *ctx, t_game *game)
 
 			switch (event.type)
 			{
-			case Expose:
-				needsRedraw = true;
-				break;
+				case Expose:
+					redraw(ctx, game);
+					break;
 
-			case ButtonPress:
-				handle_button_press(ctx, game, &event.xbutton);
-				needsRedraw = true;
-				break;
+				case ButtonPress:
+					handle_button_press(ctx, game, &event.xbutton);
+					break;
 
-			case ClientMessage:
-				if ((Atom)event.xclient.data.l[0] == ctx->wmDeleteWindow)
-					running = false;
-				break;
+				// Handle window close event
+				case ClientMessage:
+					if ((Atom)event.xclient.data.l[0] == ctx->wmDeleteWindow)
+						running = false;
+					break;
 			}
-		}
-
-		if (needsRedraw)
-		{
-			// Clear screen
-			cairo_save(ctx->cr);
-			cairo_set_source_rgb(ctx->cr, 0.1, 0.1, 0.15);
-			cairo_paint(ctx->cr);
-			cairo_restore(ctx->cr);
-
-			// Draw UI
-			createUI(game);
-			Clay_RenderCommandArray commands = Clay_EndLayout();
-			Clay_Cairo_Render(commands, ctx->fonts);
-
-			cairo_surface_flush(ctx->surface);
-			XFlush(ctx->display);
-			needsRedraw = false;
 		}
 
 		nanosleep(&frameDelay, NULL);
