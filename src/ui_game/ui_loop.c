@@ -54,10 +54,6 @@ static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEven
 
 	if (game->current_player == AI && !game->game_over)
 	{
-		// Delay before AI move
-		struct timespec delay = {0, 300000000}; // 0.3s
-		nanosleep(&delay, NULL);
-
 		ai_make_move(game);
 
 		// Check for win condition after AI move
@@ -117,20 +113,20 @@ void run_game_loop(t_window_context *ctx, t_game *game)
 
 			switch (event.type)
 			{
-			case Expose:
-				needsRedraw = true;
-				break;
+				case Expose:
+					needsRedraw = true;
+					break;
 
-			case ButtonPress:
-				handle_button_press(ctx, game, &event.xbutton);
-				needsRedraw = true;
-				break;
+				case ButtonPress:
+					handle_button_press(ctx, game, &event.xbutton);
+					needsRedraw = true;
+					break;
 
-			// Handle window close event
-			case ClientMessage:
-				if ((Atom)event.xclient.data.l[0] == ctx->wmDeleteWindow)
-					running = false;
-				break;
+				// Handle window close event
+				case ClientMessage:
+					if ((Atom)event.xclient.data.l[0] == ctx->wmDeleteWindow)
+						running = false;
+					break;
 			}
 		}
 
