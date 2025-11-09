@@ -9,7 +9,10 @@ void start_game_cli(t_game *game)
 	while (true)
 	{
 		if (game->current_player == AI)
+		{
+			ft_printf("AI is making a move.\n");
 			ai_make_move(game);
+		}
 
 		if (game->current_player == PLAYER)
 		{
