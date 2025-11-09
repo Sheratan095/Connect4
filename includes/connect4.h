@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 
 #define _POSIX_C_SOURCE 200809L
 #include <math.h>
