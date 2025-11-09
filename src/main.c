@@ -7,6 +7,8 @@ int main(int argc, char **argv)
 {
 	bool gui = false;
 
+	srand(time(NULL)); // Seed the random number generator
+
 	if (!valid_input(argc, argv, &gui))
 		return (1);
 

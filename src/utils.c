@@ -8,7 +8,8 @@ t_game *init_new_game(int rows, int cols)
 
 	game->rows = rows;
 	game->cols = cols;
-	game->current_player = PLAYER;
+	// Random first player
+	game->current_player = (rand() % 2) ? PLAYER : AI;
 	game->game_over = false;
 	game->winner = NULL_PLAYER;
 	game->last_row = -1;

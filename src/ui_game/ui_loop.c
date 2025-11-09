@@ -113,6 +113,15 @@ void run_game_loop(t_window_context *ctx, t_game *game)
 	bool running = true;
 	struct timespec frameDelay = {0, 16666667}; // 60 FPS
 
+	// Check if AI should make the first move
+	if (game->current_player == AI && !game->game_over)
+	{
+		ft_printf("AI is the first to play, making move\n");
+		ai_make_move(game);
+		switch_player(game);
+		redraw(ctx, game);
+	}
+
 	while (running)
 	{
 		while (XPending(ctx->display))
