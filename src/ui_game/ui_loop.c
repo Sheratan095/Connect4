@@ -1,8 +1,25 @@
 #include "connect4.h"
 #include "ui_window.h"
 #include "ui_game.h"
+#include <X11/keysym.h>
 
 static void redraw(t_window_context *ctx, t_game *game);
+
+static void reset_game(t_game *game)
+{
+	for (int row = 0; row < game->rows; row++)
+	{
+		for (int col = 0; col < game->cols; col++)
+		{
+			game->board[row][col] = NULL_PLAYER;
+		}
+	}
+	game->game_over = false;
+	game->winner = NULL_PLAYER;
+	game->current_player = PLAYER;
+	game->last_row = -1;
+	game->last_col = -1;
+}
 
 static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEvent *event)
 {
@@ -10,22 +27,7 @@ static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEven
 		return;
 
 	if (game->game_over)
-	{
-		// Reset game state
-		for (int row = 0; row < game->rows; row++)
-		{
-			for (int col = 0; col < game->cols; col++)
-			{
-				game->board[row][col] = NULL_PLAYER;
-			}
-		}
-		game->game_over = false;
-		game->winner = NULL_PLAYER;
-		game->current_player = PLAYER;
-		game->last_row = -1;
-		game->last_col = -1;
-		return;
-	}
+		return; // Do nothing on click when game is over
 
 	if (game->current_player == PLAYER)
 	{
@@ -41,7 +43,7 @@ static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEven
 				{
 					game->game_over = true;
 					game->winner = PLAYER;
-					return ;
+					return;
 				}
 				else
 					switch_player(game); // Only switch if move was successful and game not over
@@ -62,7 +64,7 @@ static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEven
 		{
 			game->game_over = true;
 			game->winner = AI;
-			return ;
+			return;
 		}
 		else
 		{
@@ -115,20 +117,31 @@ void run_game_loop(t_window_context *ctx, t_game *game)
 
 			switch (event.type)
 			{
-				case Expose:
-					needsRedraw = true;
-					break;
+			case Expose:
+				needsRedraw = true;
+				break;
 
-				case ButtonPress:
-					handle_button_press(ctx, game, &event.xbutton);
-					needsRedraw = true;
-					break;
+			case ButtonPress:
+				handle_button_press(ctx, game, &event.xbutton);
+				needsRedraw = true;
+				break;
 
-				// Handle window close event
-				case ClientMessage:
-					if ((Atom)event.xclient.data.l[0] == ctx->wmDeleteWindow)
-						running = false;
-					break;
+			case KeyPress:
+			{
+				KeySym keysym = XLookupKeysym(&event.xkey, 0);
+				if ((keysym == XK_r || keysym == XK_R) && game->game_over)
+				{
+					reset_game(game);
+					needsRedraw = true;
+				}
+				break;
+			}
+
+			// Handle window close event
+			case ClientMessage:
+				if ((Atom)event.xclient.data.l[0] == ctx->wmDeleteWindow)
+					running = false;
+				break;
 			}
 		}
 

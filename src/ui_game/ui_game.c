@@ -6,12 +6,12 @@ Clay_Color getPlayerColor(char player)
 {
 	switch ((int)player)
 	{
-	case PLAYER:															 // PLAYER = 1
-		return (Clay_Color){235, 69, 95, 255};   // Modern Red
-	case AI:																	 // AI = 2
-		return (Clay_Color){247, 183, 49, 255};  // Warm Yellow
-	default:																	 // NULL_PLAYER = 0
-		return (Clay_Color){45, 45, 60, 255};    // Dark Gray
+	case PLAYER:															// PLAYER = 1
+		return (Clay_Color){235, 69, 95, 255};	// Modern Red
+	case AI:																	// AI = 2
+		return (Clay_Color){247, 183, 49, 255}; // Warm Yellow
+	default:																	// NULL_PLAYER = 0
+		return (Clay_Color){45, 45, 60, 255};		// Dark Gray
 	}
 }
 
@@ -107,17 +107,14 @@ void createUI(t_game *game)
 															.childAlignment = {CLAY_ALIGN_X_CENTER, CLAY_ALIGN_Y_CENTER}},
 													.backgroundColor = cellColor,
 													.cornerRadius = CLAY_CORNER_RADIUS(CELL_SIZE / 2 - 6),
-													.border = {
-														.color = isLast ? (Clay_Color){255, 255, 255, 200} : (Clay_Color){40, 40, 55, 255}, 
-														.width = {.left = isLast ? 4 : 2, .right = isLast ? 4 : 2, .top = isLast ? 4 : 2, .bottom = isLast ? 4 : 2}
-													}}) {}
+													.border = {.color = isLast ? (Clay_Color){255, 255, 255, 200} : (Clay_Color){40, 40, 55, 255}, .width = {.left = isLast ? 4 : 2, .right = isLast ? 4 : 2, .top = isLast ? 4 : 2, .bottom = isLast ? 4 : 2}}}) {}
 					}
 				}
 			}
 		}
 
 		// Instructions
-		instr = game->game_over ? "Click anywhere to restart" : "Click a column to place your piece";
+		instr = game->game_over ? "Press R to restart" : "Click a column to place your piece";
 		instrString.isStaticallyAllocated = false;
 		instrString.length = strlen(instr);
 		instrString.chars = (char *)instr;

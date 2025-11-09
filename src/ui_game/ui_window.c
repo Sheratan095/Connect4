@@ -74,7 +74,7 @@ t_window_context *init_window(t_game *game)
 	}
 
 	XStoreName(ctx->display, ctx->window, "Connect 4");
-	XSelectInput(ctx->display, ctx->window, ExposureMask | ButtonPressMask | StructureNotifyMask);
+	XSelectInput(ctx->display, ctx->window, ExposureMask | ButtonPressMask | KeyPressMask | StructureNotifyMask);
 
 	// Set up window close handling
 	ctx->wmDeleteWindow = XInternAtom(ctx->display, "WM_DELETE_WINDOW", False);
