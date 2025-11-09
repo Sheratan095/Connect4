@@ -28,6 +28,9 @@ FLAGS	+= `pkg-config --libs cairo x11 fontconfig` -lm `pkg-config --cflags cairo
 FLAGS	+= -DPAWN_1=\"$(PAWN_1)\" -DPAWN_2=\"$(PAWN_2)\"
 FLAGS	+= -DMAX_ROWS=420 -DMAX_COLS=67
 
+# AddressSanitizer options
+export LSAN_OPTIONS := suppressions=asan.supp
+
 LIBCOREKIT = $(COREKIT_PATH)/libcorekit.a
 
 $(NAME): $(SRC) $(LIBCOREKIT)

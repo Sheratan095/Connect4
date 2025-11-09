@@ -1,0 +1,12 @@
+# Suppress Cairo internal glyph/font cache allocations
+# These are library-internal caches, not real leaks
+# They are allocated once and reused throughout the program
+
+# Cairo text rendering cache
+leak:cairo_show_text
+
+# Cairo fill operation cache  
+leak:cairo_fill
+
+# Cairo glyph cache allocations
+leak:libcairo.so
