@@ -209,34 +209,46 @@ bool is_terminal_node(t_game *game)
 
 t_pos minmax(t_game *game, int depth, int64_t alpha, int64_t beta, bool maximizingPlayer)
 {
+	// Check terminal conditions first (more efficient than getting valid moves)
+	if (winning_move(game, AI))
+		return (t_pos){.x = -1, .y = -1, .score = 100000000 + depth}; // Prefer faster wins
+
+	if (winning_move(game, PLAYER))
+		return (t_pos){.x = -1, .y = -1, .score = -100000000 - depth}; // Avoid slower losses
+
 	t_moves valid_loc = valid_moves(game);
 
-	bool is_terminal = is_terminal_node(game);
-	if (depth == 0 || is_terminal)
+	// Check for draw
+	if (valid_loc.count == 0)
 	{
-		if (is_terminal)
+		free(valid_loc.positions);
+		return (t_pos){.x = -1, .y = -1, .score = 0};
+	}
+
+	// Depth limit reached - evaluate position
+	if (depth == 0)
+	{
+		int64_t score = score_position(game);
+		free(valid_loc.positions);
+		return (t_pos){.x = -1, .y = -1, .score = score};
+	}
+
+	// Move ordering: prioritize center columns for better alpha-beta pruning
+	// Center columns are more likely to lead to wins
+	int center = game->cols / 2;
+	for (int i = 0; i < valid_loc.count - 1; i++)
+	{
+		for (int j = i + 1; j < valid_loc.count; j++)
 		{
-			if (winning_move(game, AI))
+			int dist_i = abs(valid_loc.positions[i].x - center);
+			int dist_j = abs(valid_loc.positions[j].x - center);
+			if (dist_j < dist_i)
 			{
-				free(valid_loc.positions);
-				return (t_pos){.x = -1, .y = -1, .score = 100000000};
+				// Swap
+				t_pos temp = valid_loc.positions[i];
+				valid_loc.positions[i] = valid_loc.positions[j];
+				valid_loc.positions[j] = temp;
 			}
-			else if (winning_move(game, PLAYER))
-			{
-				free(valid_loc.positions);
-				return (t_pos){.x = -1, .y = -1, .score = -100000000};
-			}
-			else // Draw
-			{
-				free(valid_loc.positions);
-				return (t_pos){.x = -1, .y = -1, .score = 0};
-			}
-		}
-		else // Depth reached
-		{
-			int64_t score = score_position(game);
-			free(valid_loc.positions);
-			return (t_pos){.x = -1, .y = -1, .score = score};
 		}
 	}
 
@@ -339,7 +351,6 @@ void ai_make_move(t_game *game)
 	{
 		int mid_col = game->cols / 2;
 		insert_pawn(game, mid_col);
-
 		return;
 	}
 
