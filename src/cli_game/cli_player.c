@@ -34,11 +34,18 @@ static int get_move(t_game *game)
 		if (!input || input[0] == '\n')
 		{
 			ft_printf("Error reading input. Please try again.\n");
+			if (input) free(input);
 			continue;
 		}
 
 		if (ft_strcmp(input, "exit\n") == 0 || ft_strcmp(input, "q\n") == 0)
+		{
 			game_over = true;
+		}
+		else if (!ft_str_only_contains(input, "0123456789\n"))
+		{
+			ft_printf("Invalid input. Please enter a number between 0 and %d.\n", game->cols - 1);
+		}
 		else
 		{
 			column = ft_atoi(input);
