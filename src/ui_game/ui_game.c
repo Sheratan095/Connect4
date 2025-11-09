@@ -47,6 +47,10 @@ void createUI(t_game *game)
 	Clay_BeginLayout();
 
 	cli_render_board(game);
+	if (game->current_player == PLAYER && !game->game_over)
+		ft_printf("Your turn. Click a column to place your piece.\n");
+	if (game->current_player == AI && !game->game_over)
+		ft_printf("AI is thinking...\n");
 
 	// Root container
 	CLAY_AUTO_ID({.layout = {
