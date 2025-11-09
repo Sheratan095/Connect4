@@ -27,14 +27,15 @@ static int get_move(t_game *game)
 
 	while (!valid_move && !game_over)
 	{
-		ft_printf("Player %s, enter your move (0-6): ",
-				  (game->current_player == PLAYER) ? PAWN_1 : PAWN_2);
+		ft_printf("Player %s, enter your move (0-%d): ",
+							(game->current_player == PLAYER) ? PAWN_1 : PAWN_2, game->cols - 1);
 
 		char *input = get_next_line(0, false);
 		if (!input || input[0] == '\n')
 		{
 			ft_printf("Error reading input. Please try again.\n");
-			if (input) free(input);
+			if (input)
+				free(input);
 			continue;
 		}
 
