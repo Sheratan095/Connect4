@@ -9,10 +9,8 @@ static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEven
 	if (event->button != Button1)
 		return;
 
-	ft_printf("Left click received\n");
 	if (game->game_over)
 	{
-		ft_printf("Game is over, starting new game\n");
 		// Reset game state
 		for (int row = 0; row < game->rows; row++)
 		{
@@ -31,35 +29,24 @@ static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEven
 
 	if (game->current_player == PLAYER)
 	{
-		ft_printf("Processing player move\n");
 		int col = get_column_at_pos(event->x, event->y, game, ctx);
-		ft_printf("Selected column: %d\n", col);
 
 		if (col >= 0) // Only try to insert if column is valid
 		{
 			int row = insert_pawn(game, col);
 			if (row != -1)
 			{
-				ft_printf("Pawn inserted at row %d, column %d\n", row, col);
-
 				// Check for win condition after player move
 				if (check_endgame(game))
 				{
 					game->game_over = true;
 					game->winner = PLAYER;
-					ft_printf("Player wins!\n");
 				}
 				else
-				{
 					switch_player(game); // Only switch if move was successful and game not over
-					ft_printf("Switching to AI turn\n");
-				}
+
 				XFlush(ctx->display);
 				redraw(ctx, game);
-			}
-			else
-			{
-				ft_printf("Column %d is full\n", col);
 			}
 		}
 		// If col < 0, click was outside board - already logged by get_column_at_pos
@@ -67,7 +54,6 @@ static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEven
 
 	if (game->current_player == AI && !game->game_over)
 	{
-		ft_printf("Game continues, AI's turn\n");
 		// Delay before AI move
 		struct timespec delay = {0, 300000000}; // 0.3s
 		nanosleep(&delay, NULL);
@@ -79,12 +65,10 @@ static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEven
 		{
 			game->game_over = true;
 			game->winner = AI;
-			ft_printf("AI wins!\n");
 		}
 		else
 		{
 			switch_player(game);
-			ft_printf("Switching back to player turn\n");
 		}
 		XFlush(ctx->display);
 		redraw(ctx, game);

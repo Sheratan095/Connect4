@@ -23,7 +23,7 @@ SRC = src/main.c \
 	src/utils.c
 
 FLAGS = -g -fsanitize=address
-# FLAGS	+= -Wall -Werror -Wextra
+FLAGS	+= -Wall -Werror -Wextra
 FLAGS	+= `pkg-config --libs cairo x11 fontconfig` -lm `pkg-config --cflags cairo x11 fontconfig`
 FLAGS	+= -DPAWN_1=\"$(PAWN_1)\" -DPAWN_2=\"$(PAWN_2)\"
 FLAGS	+= -DMAX_ROWS=420 -DMAX_COLS=67

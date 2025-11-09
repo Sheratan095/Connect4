@@ -25,22 +25,14 @@ int get_column_at_pos(int x, int y, t_game *game, t_window_context *ctx)
 
 	// First check if click is within board bounds
 	if (x < boardX || x >= boardX + boardWidth || y < boardY || y >= boardY + boardHeight)
-	{
-		ft_printf("Click outside board area\n");
 		return (-1);
-	}
 
 	// Calculate column
 	int col = (x - boardX) / CELL_SIZE;
 
 	// Validate column bounds (extra safety check)
 	if (col < 0 || col >= game->cols)
-	{
-		ft_printf("Invalid column calculated: %d\n", col);
 		return (-1);
-	}
-
-	ft_printf("Click at x=%d, y=%d (boardX=%d, boardY=%d), column=%d\n", x, y, boardX, boardY, col);
 	return (col);
 }
 
