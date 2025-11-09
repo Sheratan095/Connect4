@@ -125,7 +125,7 @@ void createUI(t_game *game)
 		CLAY_TEXT(instrString, CLAY_TEXT_CONFIG({.fontSize = 18,
 																						 .textColor = {180, 180, 180, 255}}));
 	}
-	Clay_EndLayout();
+	// Don't call Clay_EndLayout() here - let the caller handle it
 }
 
 void HandleClayErrors(Clay_ErrorData errorData)

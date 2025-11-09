@@ -2,7 +2,7 @@
 #include "ui_window.h"
 #include "ui_game.h"
 
-static void	redraw(t_window_context *ctx, t_game *game);
+static void redraw(t_window_context *ctx, t_game *game);
 
 static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEvent *event)
 {
@@ -91,7 +91,7 @@ static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEven
 	}
 }
 
-static void	redraw(t_window_context *ctx, t_game *game)
+static void redraw(t_window_context *ctx, t_game *game)
 {
 	// Clear screen
 	cairo_save(ctx->cr);
@@ -111,6 +111,7 @@ static void	redraw(t_window_context *ctx, t_game *game)
 void run_game_loop(t_window_context *ctx, t_game *game)
 {
 	bool running = true;
+	bool needsRedraw = true;										// Start with true to draw initial frame
 	struct timespec frameDelay = {0, 16666667}; // 60 FPS
 
 	while (running)
@@ -123,20 +124,28 @@ void run_game_loop(t_window_context *ctx, t_game *game)
 
 			switch (event.type)
 			{
-				case Expose:
-					redraw(ctx, game);
-					break;
+			case Expose:
+				needsRedraw = true;
+				break;
 
-				case ButtonPress:
-					handle_button_press(ctx, game, &event.xbutton);
-					break;
+			case ButtonPress:
+				handle_button_press(ctx, game, &event.xbutton);
+				needsRedraw = true;
+				break;
 
-				// Handle window close event
-				case ClientMessage:
-					if ((Atom)event.xclient.data.l[0] == ctx->wmDeleteWindow)
-						running = false;
-					break;
+			// Handle window close event
+			case ClientMessage:
+				if ((Atom)event.xclient.data.l[0] == ctx->wmDeleteWindow)
+					running = false;
+				break;
 			}
+		}
+
+		// Only redraw when needed
+		if (needsRedraw)
+		{
+			redraw(ctx, game);
+			needsRedraw = false;
 		}
 
 		nanosleep(&frameDelay, NULL);
