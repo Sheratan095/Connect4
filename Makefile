@@ -22,7 +22,7 @@ SRC = src/main.c \
 	src/ai.c \
 	src/utils.c
 
-FLAGS = -g -fsanitize=address
+FLAGS = -g -fsanitize=address -fno-omit-frame-pointer
 FLAGS	+= -Wall -Werror -Wextra
 FLAGS	+= `pkg-config --libs cairo x11 fontconfig` -lm `pkg-config --cflags cairo x11 fontconfig`
 FLAGS	+= -DPAWN_1=\"$(PAWN_1)\" -DPAWN_2=\"$(PAWN_2)\"

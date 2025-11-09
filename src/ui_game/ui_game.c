@@ -46,7 +46,7 @@ void createUI(t_game *game)
 
 	Clay_BeginLayout();
 
-	ft_print_char_matrix((const char **)game->board);
+	cli_render_board(game);
 
 	// Root container
 	CLAY_AUTO_ID({.layout = {
