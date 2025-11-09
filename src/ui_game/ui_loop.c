@@ -41,6 +41,7 @@ static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEven
 				{
 					game->game_over = true;
 					game->winner = PLAYER;
+					return ;
 				}
 				else
 					switch_player(game); // Only switch if move was successful and game not over
@@ -61,6 +62,7 @@ static void handle_button_press(t_window_context *ctx, t_game *game, XButtonEven
 		{
 			game->game_over = true;
 			game->winner = AI;
+			return ;
 		}
 		else
 		{
